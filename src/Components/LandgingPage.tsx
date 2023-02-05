@@ -1,8 +1,13 @@
-import React from 'react';
+import React, { useEffect } from 'react';
+import { Link } from 'react-router-dom';
 
 import { ShutterstockImg, LandingLogoMid, LandingLogoTop } from '../Assets/Images/index';
 
 const LandingPage = () => {
+  useEffect(() => {
+    localStorage.removeItem('data');
+  }, []);
+
   return (
     <div
       style={{ backgroundImage: `url(${ShutterstockImg})` }}
@@ -15,9 +20,12 @@ const LandingPage = () => {
         style={{ backgroundImage: `url(${LandingLogoMid})` }}
         className="absolute z-0 left-[55%] top-[42%] w-[18.75rem] h-[18.75rem]"
       ></div>
-      <button className="px-[60px] py-[18px] mt-[26.5rem] w-[29rem] bg-black rounded-lg text-white font-medium text-xl">
+      <Link
+        to={'/piradi'}
+        className="px-[60px] py-[18px] mt-[26.5rem] w-[29rem] bg-black rounded-lg text-white font-medium text-xl flex justify-center"
+      >
         რეზიუმეს დამატება
-      </button>
+      </Link>
     </div>
   );
 };
