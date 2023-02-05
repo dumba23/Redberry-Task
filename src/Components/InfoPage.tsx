@@ -1,15 +1,26 @@
 import React, { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
+import formatPhoneNumber from '../Utils/formatPhoneNumber';
 
-import { BackLogo, ErrorLogo, SuccessLogo } from '../Assets/Images';
+import { BackLogo, ErrorLogo, SuccessLogo, LogoInfo } from '../Assets/Images';
+import PersonalInfo from '../Utils/PersonalInfo';
 
 type FormDataObject = {
   name: string;
   surname: string;
   email: string;
   about: string;
-  file: string;
+  file: string | ArrayBuffer;
   mobile: string;
+};
+
+type ErrorDataObject = {
+  name: boolean;
+  surname: boolean;
+  email: boolean;
+  about: boolean;
+  file: boolean;
+  mobile: boolean;
 };
 
 const InfoPage = () => {
@@ -23,10 +34,20 @@ const InfoPage = () => {
   };
 
   const [formData, setFormData] = useState<FormDataObject>(storedFormData);
+  const [errorData, setErrorData] = useState<ErrorDataObject>({
+    name: false,
+    surname: false,
+    email: false,
+    about: false,
+    file: false,
+    mobile: false,
+  });
   const [activeInput, setActiveInput] = useState<string>('');
   const [tempMobile, setTempMobile] = useState<string>(storedFormData.mobile);
 
-  const EmailRegex = RegExp(/^\s?[A-Z0–9]+[A-Z0–9._+-]{0,}@[A-Z0–9._+-]+\.[A-Z0–9]{2,4}\s?$/i);
+  const navigate = useNavigate();
+
+  const EmailRegex = RegExp(/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/);
   const GeorgianRegex = /^[\u10A0-\u10FF]*$/;
   const MobileNumberRegex = /^(\+?995)?(79\d{7}|5\d{8})$/;
 
@@ -41,34 +62,20 @@ const InfoPage = () => {
     }
   }, []);
 
-  const formatPhoneNumber = (value: string) => {
-    if (!value) return value;
-
-    const phoneNumber = value.replace(/[^\d]/g, '');
-
-    const phoneNumberLength = phoneNumber.length;
-
-    if (phoneNumberLength < 4) return phoneNumber;
-
-    if (phoneNumberLength < 7) {
-      return `+${phoneNumber.slice(0, 3)} ${phoneNumber.slice(3)}`;
-    }
-
-    if (phoneNumberLength < 11) {
-      return `+${phoneNumber.slice(0, 3)} ${phoneNumber.slice(3, 6)} ${phoneNumber.slice(6)}`;
-    }
-    return `+${phoneNumber.slice(0, 3)} ${phoneNumber.slice(3, 6)} ${phoneNumber.slice(6, 8)} ${phoneNumber.slice(
-      8,
-      10
-    )} ${phoneNumber.slice(10, 12)}`;
-  };
-
-  const handleChange = (event: any) => {
+  const handleChange = (event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     event.preventDefault();
     const { name, value } = event.target;
 
     if (name === 'file') {
-      setFormData({ ...formData, [name]: URL.createObjectURL(event.target.files[0]) });
+      const target = event.target as HTMLInputElement;
+      const files = target.files[0];
+      const reader = new FileReader();
+      if (files.name.toLowerCase().endsWith('.png') || files.name.toLowerCase().endsWith('.jpg')) {
+        reader.readAsDataURL(files);
+        reader.addEventListener('load', () => {
+          setFormData({ ...formData, [name]: reader.result });
+        });
+      }
     } else if (name === 'mobile') {
       setFormData({ ...formData, [name]: value.replace(/\s/g, '').slice(0, 13) });
       setTempMobile(value);
@@ -76,7 +83,7 @@ const InfoPage = () => {
   };
 
   const handleValidateName = (name: string) => {
-    if (formData?.[name] === '') {
+    if (formData?.[name] === '' && !errorData?.[name]) {
       return 'border-[#BCBCBC]';
     } else if (formData?.[name].length >= 2 && GeorgianRegex.test(formData?.[name])) {
       return 'border-[#98E37E]';
@@ -85,7 +92,7 @@ const InfoPage = () => {
 
   const handleValidateEmail = () => {
     const emailEnd = '@redberry.ge';
-    if (formData.email === '') {
+    if (formData.email === '' && errorData.email === false) {
       return 'border-[#BCBCBC]';
     } else if (
       EmailRegex.test(formData.email) &&
@@ -96,11 +103,33 @@ const InfoPage = () => {
   };
 
   const handleValidateMobileNumber = () => {
-    if (formData.mobile === '') {
+    if (formData.mobile === '' && errorData.mobile === false) {
       return 'border-[#BCBCBC]';
     } else if (MobileNumberRegex.test(formData.mobile)) {
       return 'border-[#98E37E]';
     } else return 'border-[#EF5050]';
+  };
+
+  const handleSubmit = (event: { preventDefault: () => void }) => {
+    event.preventDefault();
+    let count = 0;
+    let newErrorData = {} as ErrorDataObject;
+    for (const value in formData) {
+      if ((formData[value] === '' || formData[value] === null) && formData[value] !== 'about') {
+        newErrorData = { ...newErrorData, [value]: true };
+        count = count + 1;
+      }
+    }
+
+    if (formData.file === null) {
+      alert('Please choose a image with .png or .jpeg format');
+    }
+
+    setErrorData({ ...newErrorData });
+
+    if (count === 0) {
+      navigate('/gamotsdileba');
+    }
   };
 
   return (
@@ -149,7 +178,6 @@ const InfoPage = () => {
                     value={formData.name}
                     placeholder="ანზორ"
                     onChange={handleChange}
-                    required
                   />
                 </label>
                 <div className="font-light text-sm mt-2">მინიმუმ 2 ასო, ქართული ასოები</div>
@@ -187,7 +215,6 @@ const InfoPage = () => {
                     value={formData.surname}
                     placeholder="მუმლაძე"
                     onChange={handleChange}
-                    required
                   />
                 </label>
                 <div className="font-light text-sm mt-2">მინიმუმ 2 ასო, ქართული ასოები</div>
@@ -247,7 +274,6 @@ const InfoPage = () => {
                   value={formData.email}
                   placeholder="anzor666@redberry.ge"
                   onChange={handleChange}
-                  required
                 />
               </label>
               <div className="font-light text-sm mt-2">უნდა მთავრდებოდეს redberry.ge-ით</div>
@@ -283,22 +309,32 @@ const InfoPage = () => {
                   value={formatPhoneNumber(tempMobile)}
                   placeholder="+995 551 12 34 56"
                   onChange={handleChange}
-                  required
                 />
               </label>
               <div className="font-light text-sm mt-2">უნდა აკმაყოფილებდეს ქართული ნომრების ფორმატს</div>
             </div>
             <div className="flex justify-end">
-              <input
-                type="submit"
-                value="შემდეგი"
+              <button
+                onClick={handleSubmit}
                 className="w-[8rem] px-[4rem] py-[0.8rem] bg-[#6B40E3] font-medium text-white rounded mt-[9rem] flex justify-center"
-              />
+              >
+                შემდეგი
+              </button>
             </div>
           </form>
         </div>
       </div>
-      <div className="w-2/5 bg-black">w</div>
+      <div className="w-2/5 relative">
+        <PersonalInfo
+          name={formData.name}
+          surname={formData.surname}
+          email={formData.email}
+          mobile={formData.mobile}
+          file={formData.file}
+          about={formData.about}
+        />
+        <img className="absolute top-[994px] left-[78px]" src={LogoInfo} alt="logo" />
+      </div>
     </div>
   );
 };
