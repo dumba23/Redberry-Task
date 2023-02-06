@@ -19,7 +19,7 @@ const PersonalInfo = ({
   mobile: string;
 }) => {
   return (
-    <div className="flex flex-row px-20 pt-10">
+    <div className="flex flex-row w-[80%] pt-10">
       <div className="w-3/5">
         <div className="font-bold text-4xl text-[#F93B1D]">
           {name !== '' && name + ' '}
@@ -56,11 +56,7 @@ const PersonalInfo = ({
       </div>
       <div className="w-2/5">
         {file !== null && (
-          <img
-            className="rounded-[50%] w-[246px] h-[246px] object-cover object-center"
-            alt="person"
-            src={file as string}
-          />
+          <img className="rounded-[50%] h-[246px] object-cover object-center" alt="person" src={file as string} />
         )}
       </div>
     </div>

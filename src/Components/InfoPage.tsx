@@ -15,12 +15,30 @@ type FormDataObject = {
 };
 
 type ErrorDataObject = {
-  name: boolean;
-  surname: boolean;
-  email: boolean;
-  about: boolean;
-  file: boolean;
-  mobile: boolean;
+  name: {
+    validated: boolean,
+    changed: boolean
+  } ;
+  surname: {
+    validated: boolean,
+    changed: boolean
+  } ;
+  email: {
+    validated: boolean,
+    changed: boolean
+  } ;
+  about: {
+    validated: boolean,
+    changed: boolean
+  } ;
+  file: {
+    validated: boolean,
+    changed: boolean
+  } ;
+  mobile: {
+    validated: boolean,
+    changed: boolean
+  } ;
 };
 
 const InfoPage = () => {
@@ -33,15 +51,35 @@ const InfoPage = () => {
     mobile: '',
   };
 
+  const storedErrorData = JSON.parse(localStorage.getItem('errors')) || {
+      name: {
+        validated: false,
+        changed: false, 
+      },
+      surname: {
+        validated: false,
+        changed: false, 
+      },
+      email: {
+        validated: false,
+        changed: false, 
+      },
+      about: {
+        validated: false,
+        changed: false, 
+      },
+      file: {
+        validated: false,
+        changed: false, 
+      },
+      mobile: {
+        validated: false,
+        changed: false, 
+      }
+  }
+
   const [formData, setFormData] = useState<FormDataObject>(storedFormData);
-  const [errorData, setErrorData] = useState<ErrorDataObject>({
-    name: false,
-    surname: false,
-    email: false,
-    about: false,
-    file: false,
-    mobile: false,
-  });
+  const [errorData, setErrorData] = useState<ErrorDataObject>(storedErrorData);
   const [activeInput, setActiveInput] = useState<string>('');
   const [tempMobile, setTempMobile] = useState<string>(storedFormData.mobile);
 
@@ -62,9 +100,47 @@ const InfoPage = () => {
     }
   }, []);
 
+  useEffect(() => {
+    localStorage.setItem('errors', JSON.stringify(errorData));
+  }, [errorData])
+
+  useEffect(() => {
+    const errors  = JSON.parse(localStorage.getItem('errors'));
+    if(errors) {
+      setErrorData(errors)
+    }
+  }, [])
+
   const handleChange = (event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     event.preventDefault();
     const { name, value } = event.target;
+
+    switch (name) {
+      case 'name' : 
+      case 'surname':
+        if (value.length > 1 && GeorgianRegex.test(value)) {
+          setErrorData({ ...errorData, [name]: {validated: true, changed: true} });
+        } else {
+          setErrorData({ ...errorData, [name]: {validated: false, changed: true} });
+        }
+        break;
+      case 'email':
+        const emailEnd = '@redberry.ge';
+        if (EmailRegex.test(value) && value.slice(value.length - emailEnd.length, value.length) === emailEnd) {
+          setErrorData({ ...errorData, [name]: {validated: true, changed: true} });
+        } else {
+          setErrorData({ ...errorData, [name]: {validated: false, changed: true} });
+        }
+        break;
+      case 'mobile':
+        console.log(MobileNumberRegex.test((value.replace(/ /g, ''))))
+        if (MobileNumberRegex.test((value.replace(/ /g, '')))) {
+          setErrorData({ ...errorData, [name]: {validated: true, changed: true} });
+        } else {
+          setErrorData({ ...errorData, [name]: {validated: false, changed: true} });
+        }
+        break;
+    }
 
     if (name === 'file') {
       const target = event.target as HTMLInputElement;
@@ -82,42 +158,14 @@ const InfoPage = () => {
     } else setFormData({ ...formData, [name]: value });
   };
 
-  const handleValidateName = (name: string) => {
-    if (formData?.[name] === '' && !errorData?.[name]) {
-      return 'border-[#BCBCBC]';
-    } else if (formData?.[name].length >= 2 && GeorgianRegex.test(formData?.[name])) {
-      return 'border-[#98E37E]';
-    } else return 'border-[#EF5050]';
-  };
-
-  const handleValidateEmail = () => {
-    const emailEnd = '@redberry.ge';
-    if (formData.email === '' && errorData.email === false) {
-      return 'border-[#BCBCBC]';
-    } else if (
-      EmailRegex.test(formData.email) &&
-      formData.email.slice(formData.email.length - emailEnd.length, formData.email.length) === emailEnd
-    ) {
-      return 'border-[#98E37E]';
-    } else return 'border-[#EF5050]';
-  };
-
-  const handleValidateMobileNumber = () => {
-    if (formData.mobile === '' && errorData.mobile === false) {
-      return 'border-[#BCBCBC]';
-    } else if (MobileNumberRegex.test(formData.mobile)) {
-      return 'border-[#98E37E]';
-    } else return 'border-[#EF5050]';
-  };
-
   const handleSubmit = (event: { preventDefault: () => void }) => {
     event.preventDefault();
-    let count = 0;
+
     let newErrorData = {} as ErrorDataObject;
+
     for (const value in formData) {
       if ((formData[value] === '' || formData[value] === null) && formData[value] !== 'about') {
         newErrorData = { ...newErrorData, [value]: true };
-        count = count + 1;
       }
     }
 
@@ -125,10 +173,10 @@ const InfoPage = () => {
       alert('Please choose a image with .png or .jpeg format');
     }
 
-    setErrorData({ ...newErrorData });
-
-    if (count === 0) {
+    if(JSON.stringify(newErrorData) === '{}') {
       navigate('/gamotsdileba');
+    } else {
+      setErrorData({ ...newErrorData });
     }
   };
 
@@ -144,33 +192,35 @@ const InfoPage = () => {
         </div>
         <div className="flex mt-[4.8rem] w-[80%] h-[100%]">
           <form className="w-[100%]">
-            <div className="flex flex-row justify-between">
-              <div className="w-[50%] p-2">
+            <div className="flex w-100% flex-row justify-between">
+              <div className="w-[47%] p-2">
                 <label className="font-medium relative">
-                  <span
-                    style={{
-                      color: `${
-                        (activeInput !== 'name' && handleValidateName('name').slice(8, 15)) === '#EF5050'
-                          ? '#EF5050'
-                          : 'black'
-                      }`,
-                    }}
-                  >
+                <span
+                   style={{
+                    color: `${
+                      activeInput !== 'name' && !errorData.name.validated && errorData.name.changed ? '#EF5050' : 'black'
+                    }`,
+                  }}
+                >
                     სახელი
                   </span>
                   <br />
                   {activeInput !== 'name' &&
-                    (handleValidateName('name').slice(7, 16) === '[#EF5050]' ? (
+                    (!errorData.name.validated && errorData.name.changed  ? (
                       <img className="absolute top-11 right-0 translate-x-8" src={ErrorLogo} alt="error" />
                     ) : (
-                      handleValidateName('name').slice(7, 16) !== '[#BCBCBC]' && (
+                      errorData.name.validated  && (
                         <img className="absolute top-11 right-3" src={SuccessLogo} alt="success" />
                       )
                     ))}
                   <input
-                    className={`border focus:outline-[#BCBCBC] rounded w-[80%] h-[3rem] p-2 font-normal mt-2 ${handleValidateName(
-                      'name'
-                    )}`}
+                    className={`border focus:outline-[#BCBCBC] rounded w-[100%] h-[3rem] p-2 font-normal mt-2 ${
+                      errorData.name.validated
+                        ? 'border-[#98E37E]'
+                        : !errorData.name.changed 
+                        ? 'border-[#BCBCBC]'
+                        : 'border-[#EF5050]'
+                    }`}
                     onFocus={() => setActiveInput('name')}
                     onBlur={() => setActiveInput('')}
                     type="text"
@@ -182,32 +232,34 @@ const InfoPage = () => {
                 </label>
                 <div className="font-light text-sm mt-2">მინიმუმ 2 ასო, ქართული ასოები</div>
               </div>
-              <div className="w-[50%] p-2">
-                <label className="font-medium relative">
-                  <span
-                    style={{
-                      color: `${
-                        (activeInput !== 'surname' && handleValidateName('surname').slice(8, 15)) === '#EF5050'
-                          ? '#EF5050'
-                          : 'black'
-                      }`,
-                    }}
-                  >
+              <div className="flex flex-col w-[47%] p-2">
+                <label className="font-medium relative ">
+                <span
+                   style={{
+                    color: `${
+                      activeInput !== 'surname' && !errorData.surname.validated && errorData.surname.changed ? '#EF5050' : 'black'
+                    }`,
+                  }}
+                >
                     გვარი
                   </span>
                   <br />
                   {activeInput !== 'surname' &&
-                    (handleValidateName('surname').slice(7, 16) === '[#EF5050]' ? (
+                    (!errorData.surname.validated && errorData.surname.changed  ? (
                       <img className="absolute top-11 right-0 translate-x-8" src={ErrorLogo} alt="error" />
                     ) : (
-                      handleValidateName('surname').slice(7, 16) !== '[#BCBCBC]' && (
+                      errorData.surname.validated  && (
                         <img className="absolute top-11 right-3" src={SuccessLogo} alt="success" />
                       )
                     ))}
                   <input
-                    className={`border focus:outline-[#BCBCBC] rounded w-[80%] h-[3rem] p-2 font-normal mt-2 ${handleValidateName(
-                      'surname'
-                    )}`}
+                    className={`border focus:outline-[#BCBCBC] rounded w-[100%] h-[3rem] p-2 font-normal mt-2 ${
+                      errorData.surname.validated
+                        ? 'border-[#98E37E]'
+                        : !errorData.surname.changed 
+                        ? 'border-[#BCBCBC]'
+                        : 'border-[#EF5050]'
+                    }`}
                     onFocus={() => setActiveInput('surname')}
                     onBlur={() => setActiveInput('')}
                     type="text"
@@ -246,11 +298,9 @@ const InfoPage = () => {
             <div className="mt-[2rem]">
               <label className="font-medium relative">
                 <span
-                  style={{
+                   style={{
                     color: `${
-                      (activeInput !== 'email' && handleValidateEmail().slice(8, 15)) === '#EF5050'
-                        ? '#EF5050'
-                        : 'black'
+                      activeInput !== 'email' && !errorData.email.validated && errorData.email.changed ? '#EF5050' : 'black'
                     }`,
                   }}
                 >
@@ -258,15 +308,21 @@ const InfoPage = () => {
                 </span>
                 <br />
                 {activeInput !== 'email' &&
-                  (handleValidateEmail().slice(7, 16) === '[#EF5050]' ? (
-                    <img className="absolute top-11 right-0 translate-x-8" src={ErrorLogo} alt="error" />
-                  ) : (
-                    handleValidateEmail().slice(7, 16) !== '[#BCBCBC]' && (
-                      <img className="absolute top-11 right-3" src={SuccessLogo} alt="success" />
-                    )
-                  ))}
-                <input
-                  className={`border focus:outline-[#BCBCBC] rounded w-[100%] h-[3rem] p-2 font-normal mt-2 ${handleValidateEmail()}`}
+                    (!errorData.email.validated && errorData.email.changed  ? (
+                      <img className="absolute top-11 right-0 translate-x-8" src={ErrorLogo} alt="error" />
+                    ) : (
+                      errorData.email.validated  && (
+                        <img className="absolute top-11 right-3" src={SuccessLogo} alt="success" />
+                      )
+                    ))}
+                  <input
+                    className={`border focus:outline-[#BCBCBC] rounded w-[100%] h-[3rem] p-2 font-normal mt-2 ${
+                      errorData.email.validated
+                        ? 'border-[#98E37E]'
+                        : !errorData.email.changed 
+                        ? 'border-[#BCBCBC]'
+                        : 'border-[#EF5050]'
+                    }`}
                   onFocus={() => setActiveInput('email')}
                   onBlur={() => setActiveInput('')}
                   type="text"
@@ -283,9 +339,7 @@ const InfoPage = () => {
                 <span
                   style={{
                     color: `${
-                      (activeInput !== 'mobile' && handleValidateMobileNumber().slice(8, 15)) === '#EF5050'
-                        ? '#EF5050'
-                        : 'black'
+                      activeInput !== 'mobile' && !errorData.mobile.validated && errorData.mobile.changed ? '#EF5050' : 'black'
                     }`,
                   }}
                 >
@@ -293,15 +347,21 @@ const InfoPage = () => {
                 </span>
                 <br />
                 {activeInput !== 'mobile' &&
-                  (handleValidateMobileNumber().slice(7, 16) === '[#EF5050]' ? (
-                    <img className="absolute top-11 right-0 translate-x-8" src={ErrorLogo} alt="error" />
-                  ) : (
-                    handleValidateMobileNumber().slice(7, 16) !== '[#BCBCBC]' && (
-                      <img className="absolute top-11 right-3" src={SuccessLogo} alt="success" />
-                    )
-                  ))}
-                <input
-                  className={`border focus:outline-[#BCBCBC] rounded w-[100%] h-[3rem] p-2 font-normal mt-2 ${handleValidateMobileNumber()}`}
+                    (!errorData.mobile.validated && errorData.mobile.changed  ? (
+                      <img className="absolute top-11 right-0 translate-x-8" src={ErrorLogo} alt="error" />
+                    ) : (
+                      errorData.mobile.validated  && (
+                        <img className="absolute top-11 right-3" src={SuccessLogo} alt="success" />
+                      )
+                    ))}
+                  <input
+                    className={`border focus:outline-[#BCBCBC] rounded w-[100%] h-[3rem] p-2 font-normal mt-2 ${
+                      errorData.mobile.validated
+                        ? 'border-[#98E37E]'
+                        : !errorData.mobile.changed 
+                        ? 'border-[#BCBCBC]'
+                        : 'border-[#EF5050]'
+                    }`}
                   onFocus={() => setActiveInput('mobile')}
                   onBlur={() => setActiveInput('')}
                   type="text"
@@ -324,7 +384,7 @@ const InfoPage = () => {
           </form>
         </div>
       </div>
-      <div className="w-2/5 relative">
+      <div className="w-2/5 relative flex justify-center">
         <PersonalInfo
           name={formData.name}
           surname={formData.surname}
