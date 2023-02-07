@@ -6,6 +6,7 @@ import { ShutterstockImg, LandingLogoMid, LandingLogoTop } from '../Assets/Image
 const LandingPage = () => {
   useEffect(() => {
     localStorage.removeItem('data');
+    localStorage.removeItem('errors');
   }, []);
 
   return (
