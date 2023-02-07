@@ -169,14 +169,23 @@ const InfoPage = () => {
       }
     }
 
+    let i = 0;
+
     if (formData.file === null) {
       alert('Please choose a image with .png or .jpeg format');
-    }
+    }else {
+      i += 1;
+    }    
 
-    if(JSON.stringify(newErrorData) === '{}') {
-      navigate('/gamotsdileba');
-    } else {
+      for(const value in errorData) {
+        if(errorData[value].validated){
+          i += 1;
+        }
+      }
       setErrorData({ ...newErrorData });
+    
+    if(i === 5) {
+      navigate('/gamotsdileba');
     }
   };
 
@@ -198,7 +207,7 @@ const InfoPage = () => {
                 <span
                    style={{
                     color: `${
-                      activeInput !== 'name' && !errorData.name.validated && errorData.name.changed ? '#EF5050' : 'black'
+                      activeInput !== 'name' && !errorData.name?.validated && errorData.name?.changed ? '#EF5050' : 'black'
                     }`,
                   }}
                 >
@@ -206,18 +215,18 @@ const InfoPage = () => {
                   </span>
                   <br />
                   {activeInput !== 'name' &&
-                    (!errorData.name.validated && errorData.name.changed  ? (
+                    (!errorData.name?.validated && errorData.name?.changed  ? (
                       <img className="absolute top-11 right-0 translate-x-8" src={ErrorLogo} alt="error" />
                     ) : (
-                      errorData.name.validated  && (
+                      errorData.name?.validated  && (
                         <img className="absolute top-11 right-3" src={SuccessLogo} alt="success" />
                       )
                     ))}
                   <input
                     className={`border focus:outline-[#BCBCBC] rounded w-[100%] h-[3rem] p-2 font-normal mt-2 ${
-                      errorData.name.validated
+                      errorData.name?.validated
                         ? 'border-[#98E37E]'
-                        : !errorData.name.changed 
+                        : !errorData.name?.changed 
                         ? 'border-[#BCBCBC]'
                         : 'border-[#EF5050]'
                     }`}
@@ -237,7 +246,7 @@ const InfoPage = () => {
                 <span
                    style={{
                     color: `${
-                      activeInput !== 'surname' && !errorData.surname.validated && errorData.surname.changed ? '#EF5050' : 'black'
+                      activeInput !== 'surname' && !errorData.surname?.validated && errorData.surname?.changed ? '#EF5050' : 'black'
                     }`,
                   }}
                 >
@@ -245,18 +254,18 @@ const InfoPage = () => {
                   </span>
                   <br />
                   {activeInput !== 'surname' &&
-                    (!errorData.surname.validated && errorData.surname.changed  ? (
+                    (!errorData.surname?.validated && errorData.surname?.changed  ? (
                       <img className="absolute top-11 right-0 translate-x-8" src={ErrorLogo} alt="error" />
                     ) : (
-                      errorData.surname.validated  && (
+                      errorData.surname?.validated  && (
                         <img className="absolute top-11 right-3" src={SuccessLogo} alt="success" />
                       )
                     ))}
                   <input
                     className={`border focus:outline-[#BCBCBC] rounded w-[100%] h-[3rem] p-2 font-normal mt-2 ${
-                      errorData.surname.validated
+                      errorData.surname?.validated
                         ? 'border-[#98E37E]'
-                        : !errorData.surname.changed 
+                        : !errorData.surname?.changed 
                         ? 'border-[#BCBCBC]'
                         : 'border-[#EF5050]'
                     }`}
@@ -300,7 +309,7 @@ const InfoPage = () => {
                 <span
                    style={{
                     color: `${
-                      activeInput !== 'email' && !errorData.email.validated && errorData.email.changed ? '#EF5050' : 'black'
+                      activeInput !== 'email' && !errorData.email?.validated && errorData.email?.changed ? '#EF5050' : 'black'
                     }`,
                   }}
                 >
@@ -308,18 +317,18 @@ const InfoPage = () => {
                 </span>
                 <br />
                 {activeInput !== 'email' &&
-                    (!errorData.email.validated && errorData.email.changed  ? (
+                    (!errorData.email?.validated && errorData.email?.changed  ? (
                       <img className="absolute top-11 right-0 translate-x-8" src={ErrorLogo} alt="error" />
                     ) : (
-                      errorData.email.validated  && (
+                      errorData.email?.validated  && (
                         <img className="absolute top-11 right-3" src={SuccessLogo} alt="success" />
                       )
                     ))}
                   <input
                     className={`border focus:outline-[#BCBCBC] rounded w-[100%] h-[3rem] p-2 font-normal mt-2 ${
-                      errorData.email.validated
+                      errorData.email?.validated
                         ? 'border-[#98E37E]'
-                        : !errorData.email.changed 
+                        : !errorData.email?.changed 
                         ? 'border-[#BCBCBC]'
                         : 'border-[#EF5050]'
                     }`}
@@ -339,7 +348,7 @@ const InfoPage = () => {
                 <span
                   style={{
                     color: `${
-                      activeInput !== 'mobile' && !errorData.mobile.validated && errorData.mobile.changed ? '#EF5050' : 'black'
+                      activeInput !== 'mobile' && !errorData.mobile?.validated && errorData.mobile?.changed ? '#EF5050' : 'black'
                     }`,
                   }}
                 >
@@ -347,18 +356,18 @@ const InfoPage = () => {
                 </span>
                 <br />
                 {activeInput !== 'mobile' &&
-                    (!errorData.mobile.validated && errorData.mobile.changed  ? (
+                    (!errorData.mobile?.validated && errorData.mobile?.changed  ? (
                       <img className="absolute top-11 right-0 translate-x-8" src={ErrorLogo} alt="error" />
                     ) : (
-                      errorData.mobile.validated  && (
+                      errorData.mobile?.validated  && (
                         <img className="absolute top-11 right-3" src={SuccessLogo} alt="success" />
                       )
                     ))}
                   <input
                     className={`border focus:outline-[#BCBCBC] rounded w-[100%] h-[3rem] p-2 font-normal mt-2 ${
-                      errorData.mobile.validated
+                      errorData.mobile?.validated
                         ? 'border-[#98E37E]'
-                        : !errorData.mobile.changed 
+                        : !errorData.mobile?.changed 
                         ? 'border-[#BCBCBC]'
                         : 'border-[#EF5050]'
                     }`}
