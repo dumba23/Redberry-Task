@@ -2,42 +2,10 @@ import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 
 import { BackLogo, LogoInfo } from '../Assets/Images';
+import { ExpErrorDataArray, ExpFormDataObject } from '../Types/experience.types';
 import ExperienceForm from '../Utils/ExperienceForm';
 import ExperienceInfo from '../Utils/ExperienceInfo';
 import PersonalInfo from '../Utils/PersonalInfo';
-
-export type FormDataObject = {
-  position: string;
-  employer: string;
-  start_date: string;
-  due_date: string;
-  description: string;
-};
-
-export type ExpErrorDataObject = {
-  position: {
-    validated: boolean;
-    changed: boolean;
-  };
-  employer: {
-    validated: boolean;
-    changed: boolean;
-  };
-  start_date: {
-    validated: boolean;
-    changed: boolean;
-  };
-  due_date: {
-    validated: boolean;
-    changed: boolean;
-  };
-  description: {
-    validated: boolean;
-    changed: boolean;
-  };
-};
-
-type ErrorDataArray = ExpErrorDataObject[];
 
 const ExperiencePage = () => {
   const storedFormData = JSON.parse(localStorage.getItem('dataPersonal')) || {
@@ -83,8 +51,8 @@ const ExperiencePage = () => {
 
   const storedErrorData = JSON.parse(localStorage.getItem('errorsExp')) || [initial_error_data];
 
-  const [formDatas, setFormDatas] = useState<Array<FormDataObject>>(storedExpData);
-  const [errorData, setErrorData] = useState<ErrorDataArray>(storedErrorData);
+  const [formDatas, setFormDatas] = useState<Array<ExpFormDataObject>>(storedExpData);
+  const [errorData, setErrorData] = useState<ExpErrorDataArray>(storedErrorData);
 
   const [countForm, setCountForm] = useState<Array<Number>>([1]);
 
@@ -101,7 +69,7 @@ const ExperiencePage = () => {
 
     if (countForm.length !== formDatas.length) {
       setFormDatas([...formDatas, formData]);
-      setErrorData([...errorData, initial_error_data] as unknown as ErrorDataArray);
+      setErrorData([...errorData, initial_error_data] as unknown as ExpErrorDataArray);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [countForm]);
@@ -140,7 +108,7 @@ const ExperiencePage = () => {
       }
       return obj;
     });
-    setErrorData(newErrors as ErrorDataArray);
+    setErrorData(newErrors as ExpErrorDataArray);
 
     const newData = formDatas.map((obj, idx) => {
       if (idx === index && name.slice(name.length - 4, name.length) !== 'date') {
@@ -176,7 +144,7 @@ const ExperiencePage = () => {
 
       return obj;
     });
-    setErrorData(newErrors as ErrorDataArray);
+    setErrorData(newErrors as ExpErrorDataArray);
 
     for (const value in errorData[0]) {
       if (!errorData[0]?.[value].validated) {
@@ -216,7 +184,7 @@ const ExperiencePage = () => {
 
       if (countError > 0) {
         countFormError += countChanged;
-        setErrorData(newErrorsAll as ErrorDataArray);
+        setErrorData(newErrorsAll as ExpErrorDataArray);
       }
     }
     if (countFormError === 0) {

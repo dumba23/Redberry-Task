@@ -4,42 +4,7 @@ import formatPhoneNumber from '../Utils/formatPhoneNumber';
 
 import { BackLogo, ErrorLogo, SuccessLogo, LogoInfo } from '../Assets/Images';
 import PersonalInfo from '../Utils/PersonalInfo';
-
-type FormDataObject = {
-  name: string;
-  surname: string;
-  email: string;
-  about: string;
-  file: string | ArrayBuffer;
-  mobile: string;
-};
-
-type ErrorDataObject = {
-  name: {
-    validated: boolean;
-    changed: boolean;
-  };
-  surname: {
-    validated: boolean;
-    changed: boolean;
-  };
-  email: {
-    validated: boolean;
-    changed: boolean;
-  };
-  about: {
-    validated: boolean;
-    changed: boolean;
-  };
-  file: {
-    validated: boolean;
-    changed: boolean;
-  };
-  mobile: {
-    validated: boolean;
-    changed: boolean;
-  };
-};
+import { ErrorDataInfoObject, InfoFormDataObject } from '../Types/info.types';
 
 const InfoPage = () => {
   const storedFormData = JSON.parse(localStorage.getItem('dataPersonal')) || {
@@ -78,8 +43,8 @@ const InfoPage = () => {
     },
   };
 
-  const [formData, setFormData] = useState<FormDataObject>(storedFormData);
-  const [errorData, setErrorData] = useState<ErrorDataObject>(storedErrorData);
+  const [formData, setFormData] = useState<InfoFormDataObject>(storedFormData);
+  const [errorData, setErrorData] = useState<ErrorDataInfoObject>(storedErrorData);
   const [activeInput, setActiveInput] = useState<string>('');
   const [tempMobile, setTempMobile] = useState<string>(storedFormData.mobile);
 
@@ -168,7 +133,7 @@ const InfoPage = () => {
       i += 1;
     }
 
-    let newErrorObject = {} as ErrorDataObject;
+    let newErrorObject = {} as ErrorDataInfoObject;
     for (const value in errorData) {
       if (errorData[value].validated) {
         newErrorObject = { ...newErrorObject, [value]: { validated: true, changed: true } };
