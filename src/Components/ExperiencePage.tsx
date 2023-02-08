@@ -187,42 +187,38 @@ const ExperiencePage = () => {
     //Check if additional forms are validated or never changed
     //Based on that increase countErrorFormLength and if there is any do not open next page
     //Starting from iteration with 1 because we have already test first form
+
     for (let i = 1; i < errorData.length; i++) {
-      let countNotChanged = 0;
-      for (const value in errorData[i]) {
-        if (!errorData[i]?.[value].validated && !errorData[i]?.[value].changed) {
-          countNotChanged += 1;
-        }
-
-        let countChanged = 0;
-
-        const newErrorsAll = newErrors.map((obj, idx) => {
-          if (idx === i) {
-            let newObj = {};
-            const newErrorObject = Object.keys(obj).map((key) => {
-              if (!obj?.[key].changed) {
-                newObj = { ...newObj, [key]: { validated: false, changed: true } };
-                return newObj;
-              } else if (obj?.[key].changed && obj?.[key].validated) {
-                newObj = { ...newObj, [key]: { validated: true, changed: true } };
-              }
+      let countChanged = 0;
+      let countError = 0;
+      const newErrorsAll = newErrors.map((obj, idx) => {
+        if (idx === i) {
+          let newObj = {};
+          Object.keys(obj).map((key) => {
+            if (!obj?.[key].changed) {
               countChanged += 1;
-              return obj;
-            });
-            return newErrorObject[4];
-          }
-
-          return obj;
-        });
-
-        if (countChanged >= 1) {
-          setErrorData(newErrorsAll as ErrorDataArray);
-          countChanged = 0;
+              newObj = { ...newObj, [key]: { validated: false, changed: true } };
+              return newObj;
+            } else if (obj?.[key].changed && obj?.[key].validated) {
+              newObj = { ...newObj, [key]: { validated: true, changed: true } };
+            } else if (obj?.[key].changed && !obj?.[key].validated) {
+              countChanged += 1;
+              newObj = { ...newObj, [key]: { validated: false, changed: true } };
+            }
+            countError += 1;
+            return obj;
+          });
+          return newObj;
         }
-        countFormError += countNotChanged + countChanged;
+
+        return obj;
+      });
+
+      if (countError > 0) {
+        countFormError += countChanged;
+        setErrorData(newErrorsAll as ErrorDataArray);
       }
     }
-
     if (countFormError === 0) {
       navigate('/ganatleba');
     }
