@@ -16,33 +16,33 @@ type FormDataObject = {
 
 type ErrorDataObject = {
   name: {
-    validated: boolean,
-    changed: boolean
-  } ;
+    validated: boolean;
+    changed: boolean;
+  };
   surname: {
-    validated: boolean,
-    changed: boolean
-  } ;
+    validated: boolean;
+    changed: boolean;
+  };
   email: {
-    validated: boolean,
-    changed: boolean
-  } ;
+    validated: boolean;
+    changed: boolean;
+  };
   about: {
-    validated: boolean,
-    changed: boolean
-  } ;
+    validated: boolean;
+    changed: boolean;
+  };
   file: {
-    validated: boolean,
-    changed: boolean
-  } ;
+    validated: boolean;
+    changed: boolean;
+  };
   mobile: {
-    validated: boolean,
-    changed: boolean
-  } ;
+    validated: boolean;
+    changed: boolean;
+  };
 };
 
 const InfoPage = () => {
-  const storedFormData = JSON.parse(localStorage.getItem('data')) || {
+  const storedFormData = JSON.parse(localStorage.getItem('dataPersonal')) || {
     name: '',
     surname: '',
     email: '',
@@ -51,32 +51,32 @@ const InfoPage = () => {
     mobile: '',
   };
 
-  const storedErrorData = JSON.parse(localStorage.getItem('errors')) || {
-      name: {
-        validated: false,
-        changed: false, 
-      },
-      surname: {
-        validated: false,
-        changed: false, 
-      },
-      email: {
-        validated: false,
-        changed: false, 
-      },
-      about: {
-        validated: false,
-        changed: false, 
-      },
-      file: {
-        validated: false,
-        changed: false, 
-      },
-      mobile: {
-        validated: false,
-        changed: false, 
-      }
-  }
+  const storedErrorData = JSON.parse(localStorage.getItem('errorsPersonal')) || {
+    name: {
+      validated: false,
+      changed: false,
+    },
+    surname: {
+      validated: false,
+      changed: false,
+    },
+    email: {
+      validated: false,
+      changed: false,
+    },
+    about: {
+      validated: false,
+      changed: false,
+    },
+    file: {
+      validated: false,
+      changed: false,
+    },
+    mobile: {
+      validated: false,
+      changed: false,
+    },
+  };
 
   const [formData, setFormData] = useState<FormDataObject>(storedFormData);
   const [errorData, setErrorData] = useState<ErrorDataObject>(storedErrorData);
@@ -90,54 +90,53 @@ const InfoPage = () => {
   const MobileNumberRegex = /^(\+?995)?(79\d{7}|5\d{8})$/;
 
   useEffect(() => {
-    localStorage.setItem('data', JSON.stringify(formData));
+    localStorage.setItem('dataPersonal', JSON.stringify(formData));
   }, [formData]);
 
   useEffect(() => {
-    const data = JSON.parse(localStorage.getItem('data'));
+    const data = JSON.parse(localStorage.getItem('dataPersonal'));
     if (data) {
       setFormData(data);
     }
   }, []);
 
   useEffect(() => {
-    localStorage.setItem('errors', JSON.stringify(errorData));
-  }, [errorData])
+    localStorage.setItem('errorsPersonal', JSON.stringify(errorData));
+  }, [errorData]);
 
   useEffect(() => {
-    const errors  = JSON.parse(localStorage.getItem('errors'));
-    if(errors) {
-      setErrorData(errors)
+    const errors = JSON.parse(localStorage.getItem('errorsPersonal'));
+    if (errors) {
+      setErrorData(errors);
     }
-  }, [])
+  }, []);
 
   const handleChange = (event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     event.preventDefault();
     const { name, value } = event.target;
 
     switch (name) {
-      case 'name' : 
+      case 'name':
       case 'surname':
         if (value.length > 1 && GeorgianRegex.test(value)) {
-          setErrorData({ ...errorData, [name]: {validated: true, changed: true} });
+          setErrorData({ ...errorData, [name]: { validated: true, changed: true } });
         } else {
-          setErrorData({ ...errorData, [name]: {validated: false, changed: true} });
+          setErrorData({ ...errorData, [name]: { validated: false, changed: true } });
         }
         break;
       case 'email':
         const emailEnd = '@redberry.ge';
         if (EmailRegex.test(value) && value.slice(value.length - emailEnd.length, value.length) === emailEnd) {
-          setErrorData({ ...errorData, [name]: {validated: true, changed: true} });
+          setErrorData({ ...errorData, [name]: { validated: true, changed: true } });
         } else {
-          setErrorData({ ...errorData, [name]: {validated: false, changed: true} });
+          setErrorData({ ...errorData, [name]: { validated: false, changed: true } });
         }
         break;
       case 'mobile':
-        console.log(MobileNumberRegex.test((value.replace(/ /g, ''))))
-        if (MobileNumberRegex.test((value.replace(/ /g, '')))) {
-          setErrorData({ ...errorData, [name]: {validated: true, changed: true} });
+        if (MobileNumberRegex.test(value.slice(0, 17).replace(/ /g, ''))) {
+          setErrorData({ ...errorData, [name]: { validated: true, changed: true } });
         } else {
-          setErrorData({ ...errorData, [name]: {validated: false, changed: true} });
+          setErrorData({ ...errorData, [name]: { validated: false, changed: true } });
         }
         break;
     }
@@ -161,30 +160,25 @@ const InfoPage = () => {
   const handleSubmit = (event: { preventDefault: () => void }) => {
     event.preventDefault();
 
-    let newErrorData = {} as ErrorDataObject;
-
-    for (const value in formData) {
-      if ((formData[value] === '' || formData[value] === null) && formData[value] !== 'about') {
-        newErrorData = { ...newErrorData, [value]: true };
-      }
-    }
-
     let i = 0;
 
     if (formData.file === null) {
       alert('Please choose a image with .png or .jpeg format');
-    }else {
+    } else {
       i += 1;
-    }    
+    }
 
-      for(const value in errorData) {
-        if(errorData[value].validated){
-          i += 1;
-        }
+    let newErrorObject = {} as ErrorDataObject;
+    for (const value in errorData) {
+      if (errorData[value].validated) {
+        newErrorObject = { ...newErrorObject, [value]: { validated: true, changed: true } };
+        i += 1;
+      } else if (!errorData[value].changed) {
+        newErrorObject = { ...newErrorObject, [value]: { validated: false, changed: true } };
+        setErrorData(newErrorObject);
       }
-      setErrorData({ ...newErrorData });
-    
-    if(i === 5) {
+    }
+    if (i === 5) {
       navigate('/gamotsdileba');
     }
   };
@@ -193,7 +187,7 @@ const InfoPage = () => {
     <div className="flex flex-row">
       <div className="w-3/5 h-[100vh] flex flex-col items-center bg-[#F9F9F9]">
         <Link to={'/'} className="absolute left-10 top-12 translate-y-1">
-          <img src={BackLogo} alt="Logo" onClick={() => localStorage.removeItem('data')} />
+          <img src={BackLogo} alt="Logo" />
         </Link>
         <div className="border-b border-[#1A1A1A] w-[80%] h-[4rem] flex justify-between mt-[2.5rem] items-center">
           <div className="font-bold text-2xl">პირადი ინფო</div>
@@ -204,21 +198,23 @@ const InfoPage = () => {
             <div className="flex w-100% flex-row justify-between">
               <div className="w-[47%] p-2">
                 <label className="font-medium relative">
-                <span
-                   style={{
-                    color: `${
-                      activeInput !== 'name' && !errorData.name?.validated && errorData.name?.changed ? '#EF5050' : 'black'
-                    }`,
-                  }}
-                >
+                  <span
+                    style={{
+                      color: `${
+                        activeInput !== 'name' && !errorData.name?.validated && errorData.name?.changed
+                          ? '#EF5050'
+                          : 'black'
+                      }`,
+                    }}
+                  >
                     სახელი
                   </span>
                   <br />
                   {activeInput !== 'name' &&
-                    (!errorData.name?.validated && errorData.name?.changed  ? (
+                    (!errorData.name?.validated && errorData.name?.changed ? (
                       <img className="absolute top-11 right-0 translate-x-8" src={ErrorLogo} alt="error" />
                     ) : (
-                      errorData.name?.validated  && (
+                      errorData.name?.validated && (
                         <img className="absolute top-11 right-3" src={SuccessLogo} alt="success" />
                       )
                     ))}
@@ -226,7 +222,7 @@ const InfoPage = () => {
                     className={`border focus:outline-[#BCBCBC] rounded w-[100%] h-[3rem] p-2 font-normal mt-2 ${
                       errorData.name?.validated
                         ? 'border-[#98E37E]'
-                        : !errorData.name?.changed 
+                        : !errorData.name?.changed
                         ? 'border-[#BCBCBC]'
                         : 'border-[#EF5050]'
                     }`}
@@ -243,21 +239,23 @@ const InfoPage = () => {
               </div>
               <div className="flex flex-col w-[47%] p-2">
                 <label className="font-medium relative ">
-                <span
-                   style={{
-                    color: `${
-                      activeInput !== 'surname' && !errorData.surname?.validated && errorData.surname?.changed ? '#EF5050' : 'black'
-                    }`,
-                  }}
-                >
+                  <span
+                    style={{
+                      color: `${
+                        activeInput !== 'surname' && !errorData.surname?.validated && errorData.surname?.changed
+                          ? '#EF5050'
+                          : 'black'
+                      }`,
+                    }}
+                  >
                     გვარი
                   </span>
                   <br />
                   {activeInput !== 'surname' &&
-                    (!errorData.surname?.validated && errorData.surname?.changed  ? (
+                    (!errorData.surname?.validated && errorData.surname?.changed ? (
                       <img className="absolute top-11 right-0 translate-x-8" src={ErrorLogo} alt="error" />
                     ) : (
-                      errorData.surname?.validated  && (
+                      errorData.surname?.validated && (
                         <img className="absolute top-11 right-3" src={SuccessLogo} alt="success" />
                       )
                     ))}
@@ -265,7 +263,7 @@ const InfoPage = () => {
                     className={`border focus:outline-[#BCBCBC] rounded w-[100%] h-[3rem] p-2 font-normal mt-2 ${
                       errorData.surname?.validated
                         ? 'border-[#98E37E]'
-                        : !errorData.surname?.changed 
+                        : !errorData.surname?.changed
                         ? 'border-[#BCBCBC]'
                         : 'border-[#EF5050]'
                     }`}
@@ -307,9 +305,11 @@ const InfoPage = () => {
             <div className="mt-[2rem]">
               <label className="font-medium relative">
                 <span
-                   style={{
+                  style={{
                     color: `${
-                      activeInput !== 'email' && !errorData.email?.validated && errorData.email?.changed ? '#EF5050' : 'black'
+                      activeInput !== 'email' && !errorData.email?.validated && errorData.email?.changed
+                        ? '#EF5050'
+                        : 'black'
                     }`,
                   }}
                 >
@@ -317,21 +317,21 @@ const InfoPage = () => {
                 </span>
                 <br />
                 {activeInput !== 'email' &&
-                    (!errorData.email?.validated && errorData.email?.changed  ? (
-                      <img className="absolute top-11 right-0 translate-x-8" src={ErrorLogo} alt="error" />
-                    ) : (
-                      errorData.email?.validated  && (
-                        <img className="absolute top-11 right-3" src={SuccessLogo} alt="success" />
-                      )
-                    ))}
-                  <input
-                    className={`border focus:outline-[#BCBCBC] rounded w-[100%] h-[3rem] p-2 font-normal mt-2 ${
-                      errorData.email?.validated
-                        ? 'border-[#98E37E]'
-                        : !errorData.email?.changed 
-                        ? 'border-[#BCBCBC]'
-                        : 'border-[#EF5050]'
-                    }`}
+                  (!errorData.email?.validated && errorData.email?.changed ? (
+                    <img className="absolute top-11 right-0 translate-x-8" src={ErrorLogo} alt="error" />
+                  ) : (
+                    errorData.email?.validated && (
+                      <img className="absolute top-11 right-3" src={SuccessLogo} alt="success" />
+                    )
+                  ))}
+                <input
+                  className={`border focus:outline-[#BCBCBC] rounded w-[100%] h-[3rem] p-2 font-normal mt-2 ${
+                    errorData.email?.validated
+                      ? 'border-[#98E37E]'
+                      : !errorData.email?.changed
+                      ? 'border-[#BCBCBC]'
+                      : 'border-[#EF5050]'
+                  }`}
                   onFocus={() => setActiveInput('email')}
                   onBlur={() => setActiveInput('')}
                   type="text"
@@ -348,7 +348,9 @@ const InfoPage = () => {
                 <span
                   style={{
                     color: `${
-                      activeInput !== 'mobile' && !errorData.mobile?.validated && errorData.mobile?.changed ? '#EF5050' : 'black'
+                      activeInput !== 'mobile' && !errorData.mobile?.validated && errorData.mobile?.changed
+                        ? '#EF5050'
+                        : 'black'
                     }`,
                   }}
                 >
@@ -356,21 +358,21 @@ const InfoPage = () => {
                 </span>
                 <br />
                 {activeInput !== 'mobile' &&
-                    (!errorData.mobile?.validated && errorData.mobile?.changed  ? (
-                      <img className="absolute top-11 right-0 translate-x-8" src={ErrorLogo} alt="error" />
-                    ) : (
-                      errorData.mobile?.validated  && (
-                        <img className="absolute top-11 right-3" src={SuccessLogo} alt="success" />
-                      )
-                    ))}
-                  <input
-                    className={`border focus:outline-[#BCBCBC] rounded w-[100%] h-[3rem] p-2 font-normal mt-2 ${
-                      errorData.mobile?.validated
-                        ? 'border-[#98E37E]'
-                        : !errorData.mobile?.changed 
-                        ? 'border-[#BCBCBC]'
-                        : 'border-[#EF5050]'
-                    }`}
+                  (!errorData.mobile?.validated && errorData.mobile?.changed ? (
+                    <img className="absolute top-11 right-0 translate-x-8" src={ErrorLogo} alt="error" />
+                  ) : (
+                    errorData.mobile?.validated && (
+                      <img className="absolute top-11 right-3" src={SuccessLogo} alt="success" />
+                    )
+                  ))}
+                <input
+                  className={`border focus:outline-[#BCBCBC] rounded w-[100%] h-[3rem] p-2 font-normal mt-2 ${
+                    errorData.mobile?.validated
+                      ? 'border-[#98E37E]'
+                      : !errorData.mobile?.changed
+                      ? 'border-[#BCBCBC]'
+                      : 'border-[#EF5050]'
+                  }`}
                   onFocus={() => setActiveInput('mobile')}
                   onBlur={() => setActiveInput('')}
                   type="text"
