@@ -1,5 +1,5 @@
 import React, { ChangeEvent, useState } from 'react';
-import { ExpErrorDataObject, FormDataObject } from '../Components/ExperiencePage';
+import { ExpErrorDataObject, ExpFormDataObject } from '../Types/experience.types'; 
 
 import { ErrorLogo, SuccessLogo } from '../Assets/Images';
 
@@ -11,7 +11,7 @@ const ExperienceForm = ({
 }: {
   handleChange: (event: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => void;
   index: number;
-  data: FormDataObject;
+  data: ExpFormDataObject;
   errors: ExpErrorDataObject;
 }) => {
   const [activeInput, setActiveInput] = useState<string>('');
