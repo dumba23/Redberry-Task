@@ -1,35 +1,35 @@
 export type InfoFormDataObject = {
-    name: string;
-    surname: string;
-    email: string;
-    about: string;
-    file: string | ArrayBuffer;
-    mobile: string;
-  };
-  
+  name: string;
+  surname: string;
+  email: string;
+  about_me: string;
+  image: string | ArrayBuffer;
+  phone_number: string;
+};
+
 export type ErrorDataInfoObject = {
-    name: {
-      validated: boolean;
-      changed: boolean;
-    };
-    surname: {
-      validated: boolean;
-      changed: boolean;
-    };
-    email: {
-      validated: boolean;
-      changed: boolean;
-    };
-    about: {
-      validated: boolean;
-      changed: boolean;
-    };
-    file: {
-      validated: boolean;
-      changed: boolean;
-    };
-    mobile: {
-      validated: boolean;
-      changed: boolean;
-    };
+  name: {
+    validated: boolean;
+    changed: boolean;
   };
+  surname: {
+    validated: boolean;
+    changed: boolean;
+  };
+  email: {
+    validated: boolean;
+    changed: boolean;
+  };
+  about_me: {
+    validated: boolean;
+    changed: boolean;
+  };
+  image: {
+    validated: boolean;
+    changed: boolean;
+  };
+  phone_number: {
+    validated: boolean;
+    changed: boolean;
+  };
+};

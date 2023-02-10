@@ -12,9 +12,9 @@ const ExperiencePage = () => {
     name: '',
     surname: '',
     email: '',
-    about: '',
-    file: null,
-    mobile: '',
+    about_me: '',
+    image: null,
+    phone_number: '',
   };
 
   const storedExpData = JSON.parse(localStorage.getItem('dataExp')) || [
@@ -132,14 +132,18 @@ const ExperiencePage = () => {
     const newErrors = errorData.map((obj, idx) => {
       if (idx === 0) {
         let newObj = {};
-        const newErrorObject = Object.keys(obj).map((key) => {
+        Object.keys(obj).map((key) => {
           if (!obj?.[key].changed) {
             newObj = { ...newObj, [key]: { validated: false, changed: true } };
             return newObj;
+          } else if (obj?.[key].changed && obj?.[key].validated) {
+            newObj = { ...newObj, [key]: { validated: true, changed: true } };
+          } else if (obj?.[key].changed && !obj?.[key].validated) {
+            newObj = { ...newObj, [key]: { validated: false, changed: true } };
           }
           return obj;
         });
-        return newErrorObject[4];
+        return newObj;
       }
 
       return obj;
@@ -153,8 +157,8 @@ const ExperiencePage = () => {
     }
 
     //Check if additional forms are validated or never changed
-    //Based on that increase countErrorFormLength and if there is any do not open next page
-    //Starting from iteration with 1 because we have already test first form
+    //Based on that increase countErrorForm and if there is any do not open next page
+    //Starting from iteration with 1 because we have already tested first form
 
     for (let i = 1; i < errorData.length; i++) {
       let countChanged = 0;
@@ -206,7 +210,6 @@ const ExperiencePage = () => {
           <ExperienceForm
             handleChange={(e) => handleChange(e, i)}
             key={i}
-            index={i}
             data={
               formDatas[i] || {
                 position: '',
@@ -247,9 +250,9 @@ const ExperiencePage = () => {
           name={storedFormData.name}
           surname={storedFormData.surname}
           email={storedFormData.email}
-          mobile={storedFormData.mobile}
-          file={storedFormData.file}
-          about={storedFormData.about}
+          mobile={storedFormData.phone_number}
+          image={storedFormData.image}
+          about={storedFormData.about_me}
         />
         <div className="w-[79%] h-[1px] bg-[#C1C1C1] mt-6" />
         <div className="text-[#F93B1D] w-[80%] mt-4 font-bold text-lg">გამოცდილება</div>

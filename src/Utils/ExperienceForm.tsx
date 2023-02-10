@@ -1,16 +1,14 @@
 import React, { ChangeEvent, useState } from 'react';
-import { ExpErrorDataObject, ExpFormDataObject } from '../Types/experience.types'; 
+import { ExpErrorDataObject, ExpFormDataObject } from '../Types/experience.types';
 
 import { ErrorLogo, SuccessLogo } from '../Assets/Images';
 
 const ExperienceForm = ({
   handleChange,
-  index,
   data,
   errors,
 }: {
   handleChange: (event: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => void;
-  index: number;
   data: ExpFormDataObject;
   errors: ExpErrorDataObject;
 }) => {

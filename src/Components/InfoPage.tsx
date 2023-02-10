@@ -11,9 +11,9 @@ const InfoPage = () => {
     name: '',
     surname: '',
     email: '',
-    about: '',
-    file: null,
-    mobile: '',
+    about_me: '',
+    image: null,
+    phone_number: '',
   };
 
   const storedErrorData = JSON.parse(localStorage.getItem('errorsPersonal')) || {
@@ -29,15 +29,15 @@ const InfoPage = () => {
       validated: false,
       changed: false,
     },
-    about: {
+    about_me: {
       validated: false,
       changed: false,
     },
-    file: {
+    image: {
       validated: false,
       changed: false,
     },
-    mobile: {
+    phone_number: {
       validated: false,
       changed: false,
     },
@@ -97,7 +97,7 @@ const InfoPage = () => {
           setErrorData({ ...errorData, [name]: { validated: false, changed: true } });
         }
         break;
-      case 'mobile':
+      case 'phone_number':
         if (MobileNumberRegex.test(value.slice(0, 17).replace(/ /g, ''))) {
           setErrorData({ ...errorData, [name]: { validated: true, changed: true } });
         } else {
@@ -106,17 +106,18 @@ const InfoPage = () => {
         break;
     }
 
-    if (name === 'file') {
+    if (name === 'image') {
       const target = event.target as HTMLInputElement;
       const files = target.files[0];
       const reader = new FileReader();
+
       if (files.name.toLowerCase().endsWith('.png') || files.name.toLowerCase().endsWith('.jpg')) {
         reader.readAsDataURL(files);
         reader.addEventListener('load', () => {
-          setFormData({ ...formData, [name]: reader.result });
+          setFormData({ ...formData, [name]: reader.result});
         });
       }
-    } else if (name === 'mobile') {
+    } else if (name === 'phone_number') {
       setFormData({ ...formData, [name]: value.replace(/\s/g, '').slice(0, 13) });
       setTempMobile(value);
     } else setFormData({ ...formData, [name]: value });
@@ -127,7 +128,7 @@ const InfoPage = () => {
 
     let i = 0;
 
-    if (formData.file === null) {
+    if (formData.image === null) {
       alert('Please choose a image with .png or .jpeg format');
     } else {
       i += 1;
@@ -247,7 +248,7 @@ const InfoPage = () => {
             <div className="flex items-center mt-[3rem]">
               <div className="font-medium text-lg mr-[1.2rem]">პირადი ფოტოს ატვირთვა</div>
               <label className="custom-file-upload">
-                <input name="file" type="file" className="hidden" onChange={handleChange} />
+                <input name="image" type="file" className="hidden" onChange={handleChange} />
                 <div className="px-3 py-1 w-[6.7rem] items-center bg-[#0E80BF] rounded text-white text-sm font-normal flex justify-center items-center">
                   ატვირთვა
                 </div>
@@ -258,10 +259,10 @@ const InfoPage = () => {
                 ჩემ შესახებ (არასავალდებულო) <br />
                 <textarea
                   className={`border focus:outline-[#BCBCBC] rounded w-[100%] h-[6.5rem] p-2 font-normal mt-2 ${
-                    formData.about.length > 2 ? 'border-[#98E37E]' : 'border-[#BCBCBC]'
+                    formData.about_me.length > 2 ? 'border-[#98E37E]' : 'border-[#BCBCBC]'
                   }`}
-                  name="about"
-                  value={formData.about}
+                  name="about_me"
+                  value={formData.about_me}
                   placeholder="ზოგადი ინფო შენ შესახებ"
                   onChange={handleChange}
                 />
@@ -313,7 +314,9 @@ const InfoPage = () => {
                 <span
                   style={{
                     color: `${
-                      activeInput !== 'mobile' && !errorData.mobile?.validated && errorData.mobile?.changed
+                      activeInput !== 'phone_number' &&
+                      !errorData.phone_number?.validated &&
+                      errorData.phone_number?.changed
                         ? '#EF5050'
                         : 'black'
                     }`,
@@ -322,26 +325,26 @@ const InfoPage = () => {
                   მობილურის ნომერი
                 </span>
                 <br />
-                {activeInput !== 'mobile' &&
-                  (!errorData.mobile?.validated && errorData.mobile?.changed ? (
+                {activeInput !== 'phone_number' &&
+                  (!errorData.phone_number?.validated && errorData.phone_number?.changed ? (
                     <img className="absolute top-11 right-0 translate-x-8" src={ErrorLogo} alt="error" />
                   ) : (
-                    errorData.mobile?.validated && (
+                    errorData.phone_number?.validated && (
                       <img className="absolute top-11 right-3" src={SuccessLogo} alt="success" />
                     )
                   ))}
                 <input
                   className={`border focus:outline-[#BCBCBC] rounded w-[100%] h-[3rem] p-2 font-normal mt-2 ${
-                    errorData.mobile?.validated
+                    errorData.phone_number?.validated
                       ? 'border-[#98E37E]'
-                      : !errorData.mobile?.changed
+                      : !errorData.phone_number?.changed
                       ? 'border-[#BCBCBC]'
                       : 'border-[#EF5050]'
                   }`}
-                  onFocus={() => setActiveInput('mobile')}
+                  onFocus={() => setActiveInput('phone_number')}
                   onBlur={() => setActiveInput('')}
                   type="text"
-                  name="mobile"
+                  name="phone_number"
                   value={formatPhoneNumber(tempMobile)}
                   placeholder="+995 551 12 34 56"
                   onChange={handleChange}
@@ -365,9 +368,9 @@ const InfoPage = () => {
           name={formData.name}
           surname={formData.surname}
           email={formData.email}
-          mobile={formData.mobile}
-          file={formData.file}
-          about={formData.about}
+          mobile={formData.phone_number}
+          image={formData.image}
+          about={formData.about_me}
         />
         <img className="absolute top-[994px] left-[78px]" src={LogoInfo} alt="logo" />
       </div>

@@ -1,18 +1,7 @@
 import React from 'react';
+import { ExpFormDataObject } from '../Types/experience.types';
 
-const ExperienceInfo = ({
-  position,
-  employer,
-  start_date,
-  due_date,
-  description,
-}: {
-  position: string;
-  employer: string;
-  start_date: string;
-  due_date: string;
-  description: string;
-}) => {
+const ExperienceInfo = ({ position, employer, start_date, due_date, description }: ExpFormDataObject) => {
   return (
     <div className="flex w-[80%] mt-4 flex-col">
       {position !== '' && employer !== '' && (

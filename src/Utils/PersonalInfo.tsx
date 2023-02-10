@@ -8,14 +8,14 @@ const PersonalInfo = ({
   surname,
   email,
   about,
-  file,
+  image,
   mobile,
 }: {
   name: string;
   surname: string;
   email: string;
   about: string;
-  file: string | ArrayBuffer;
+  image: string | ArrayBuffer;
   mobile: string;
 }) => {
   return (
@@ -55,8 +55,8 @@ const PersonalInfo = ({
         </div>
       </div>
       <div className="w-2/5">
-        {file !== null && (
-          <img className="rounded-[50%] h-[246px] object-cover object-center" alt="person" src={file as string} />
+        {image !== null && (
+          <img className="rounded-[50%] h-[246px] object-cover object-center" alt="person" src={image as string} />
         )}
       </div>
     </div>
