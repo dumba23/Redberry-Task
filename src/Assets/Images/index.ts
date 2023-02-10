@@ -9,6 +9,7 @@ import Mobile from './mobile.png';
 import Email from './email.png';
 import Arrow from './arrow.png';
 import BlacklogoResume from './backlogoresume.png';
+import Close from './close.png';
 
 export const ShutterstockImg = Shutterstock;
 export const LandingLogoMid = LandingMid;
@@ -21,3 +22,4 @@ export const EmailLogo = Email;
 export const MobileLogo = Mobile;
 export const ArrowLogo = Arrow;
 export const BackLogoResume = BlacklogoResume;
+export const CloseLogo = Close;

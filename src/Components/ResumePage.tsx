@@ -6,11 +6,12 @@ import dataURItoBlob from '../Utils/dataURItoBlob';
 import PersonalInfo from '../Utils/PersonalInfo';
 import ExperienceInfo from '../Utils/ExperienceInfo';
 import EducationInfo from '../Utils/EducationInfo';
-import { BackLogoResume, LogoInfo } from '../Assets/Images';
+import { BackLogoResume, CloseLogo, LogoInfo } from '../Assets/Images';
 import { Link } from 'react-router-dom';
 
 const ResumePage = () => {
   const [data, setData] = useState<DataObject>();
+  const [isOpen, setIsOpen] = useState<Boolean>(true);
 
   let storedPersonalData = JSON.parse(localStorage.getItem('dataPersonal'));
   const storedExpData = JSON.parse(localStorage.getItem('dataExp'));
@@ -86,6 +87,17 @@ const ResumePage = () => {
             );
           })}
           <img className="absolute top-[814px] left-[70px]" src={LogoInfo} alt="logo" />
+        </div>
+      )}
+      {isOpen && (
+        <div className="flex items-center justify-center absolute w-[427px] h-[167px] border-[#E4E4E4] border-[1px] top-12 left-[1500px] text-3xl shadow-md rounded-lg">
+          <img
+            src={CloseLogo}
+            alt="close"
+            className="absolute top-4 left-[94%] cursor-pointer"
+            onClick={() => setIsOpen(false)}
+          />
+          <span className="flex items-center justify-center ml-[12%]">რეზიუმე წარმატებით გაიგზავნა 🎉</span>
         </div>
       )}
     </div>
