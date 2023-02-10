@@ -1,14 +1,14 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 
-import { BackLogo, LogoInfo } from '../Assets/Images';
-import { ExpErrorDataArray, ExpFormDataObject } from '../Types/experience.types';
+import { BackLogo, LogoInfo } from '../Assets';
+import { ExpErrorDataArray, ExpErrorDataObject, ExpFormDataObject } from '../Types/experience.types';
 import ExperienceForm from '../Utils/ExperienceForm';
 import ExperienceInfo from '../Utils/ExperienceInfo';
 import PersonalInfo from '../Utils/PersonalInfo';
 
 const ExperiencePage = () => {
-  const storedFormData = JSON.parse(localStorage.getItem('dataPersonal')) || {
+  const storedFormData = JSON.parse(localStorage.getItem('dataPersonal')!) || {
     name: '',
     surname: '',
     email: '',
@@ -17,15 +17,17 @@ const ExperiencePage = () => {
     phone_number: '',
   };
 
-  const storedExpData = JSON.parse(localStorage.getItem('dataExp')) || [
-    {
-      position: '',
-      employer: '',
-      start_date: '',
-      due_date: '',
-      description: '',
-    },
-  ];
+  const storedExpData =
+    JSON.parse(localStorage.getItem('dataExp')!) ||
+    ([
+      {
+        position: '',
+        employer: '',
+        start_date: '',
+        due_date: '',
+        description: '',
+      },
+    ] as ExpFormDataObject[]);
   const initial_error_data = {
     position: {
       validated: false,
@@ -49,7 +51,7 @@ const ExperiencePage = () => {
     },
   };
 
-  const storedErrorData = JSON.parse(localStorage.getItem('errorsExp')) || [initial_error_data];
+  const storedErrorData = JSON.parse(localStorage.getItem('errorsExp')!) || [initial_error_data];
 
   const [formDatas, setFormDatas] = useState<Array<ExpFormDataObject>>(storedExpData);
   const [errorData, setErrorData] = useState<ExpErrorDataArray>(storedErrorData);
@@ -79,7 +81,7 @@ const ExperiencePage = () => {
   }, [formDatas]);
 
   useEffect(() => {
-    const data = JSON.parse(localStorage.getItem('dataExp'));
+    const data = JSON.parse(localStorage.getItem('dataExp')!);
     if (data) {
       setFormDatas(data);
     }
@@ -90,7 +92,7 @@ const ExperiencePage = () => {
   }, [errorData]);
 
   useEffect(() => {
-    const errors = JSON.parse(localStorage.getItem('errorsExp'));
+    const errors = JSON.parse(localStorage.getItem('errorsExp')!);
     if (errors) {
       setErrorData(errors);
     }
@@ -133,12 +135,18 @@ const ExperiencePage = () => {
       if (idx === 0) {
         let newObj = {};
         Object.keys(obj).map((key) => {
-          if (!obj?.[key].changed) {
+          if (!obj?.[key as keyof ExpErrorDataObject].changed) {
             newObj = { ...newObj, [key]: { validated: false, changed: true } };
             return newObj;
-          } else if (obj?.[key].changed && obj?.[key].validated) {
+          } else if (
+            obj?.[key as keyof ExpErrorDataObject].changed &&
+            obj?.[key as keyof ExpErrorDataObject].validated
+          ) {
             newObj = { ...newObj, [key]: { validated: true, changed: true } };
-          } else if (obj?.[key].changed && !obj?.[key].validated) {
+          } else if (
+            obj?.[key as keyof ExpErrorDataObject].changed &&
+            !obj?.[key as keyof ExpErrorDataObject].validated
+          ) {
             newObj = { ...newObj, [key]: { validated: false, changed: true } };
           }
           return obj;
@@ -151,7 +159,7 @@ const ExperiencePage = () => {
     setErrorData(newErrors as ExpErrorDataArray);
 
     for (const value in errorData[0]) {
-      if (!errorData[0]?.[value].validated) {
+      if (!errorData[0]?.[value as keyof ExpErrorDataObject].validated) {
         countFormError += 1;
       }
     }
@@ -163,17 +171,23 @@ const ExperiencePage = () => {
     for (let i = 1; i < errorData.length; i++) {
       let countChanged = 0;
       let countError = 0;
-      const newErrorsAll = newErrors.map((obj, idx) => {
+      const newErrorsAll = (newErrors as ExpErrorDataArray).map((obj, idx) => {
         if (idx === i) {
           let newObj = {};
           Object.keys(obj).map((key) => {
-            if (!obj?.[key].changed) {
+            if (!obj?.[key as keyof ExpErrorDataObject].changed) {
               countChanged += 1;
               newObj = { ...newObj, [key]: { validated: false, changed: true } };
               return newObj;
-            } else if (obj?.[key].changed && obj?.[key].validated) {
+            } else if (
+              obj?.[key as keyof ExpErrorDataObject].changed &&
+              obj?.[key as keyof ExpErrorDataObject].validated
+            ) {
               newObj = { ...newObj, [key]: { validated: true, changed: true } };
-            } else if (obj?.[key].changed && !obj?.[key].validated) {
+            } else if (
+              obj?.[key as keyof ExpErrorDataObject].changed &&
+              !obj?.[key as keyof ExpErrorDataObject].validated
+            ) {
               countChanged += 1;
               newObj = { ...newObj, [key]: { validated: false, changed: true } };
             }

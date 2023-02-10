@@ -1,15 +1,15 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 
-import { BackLogo, LogoInfo } from '../Assets/Images';
-import { EducationErrorDataArray, EducationFormDataObject } from '../Types/education.types';
+import { BackLogo, LogoInfo } from '../Assets';
+import { EducationErrorDataArray, EducationErrorDataObject, EducationFormDataObject } from '../Types/education.types';
 import EducationForm from '../Utils/EducationForm';
 import ExperienceInfo from '../Utils/ExperienceInfo';
 import EducationInfo from '../Utils/EducationInfo';
 import PersonalInfo from '../Utils/PersonalInfo';
 
 const EducationPage = () => {
-  const storedPersonalData = JSON.parse(localStorage.getItem('dataPersonal')) || {
+  const storedPersonalData = JSON.parse(localStorage.getItem('dataPersonal')!) || {
     name: '',
     surname: '',
     email: '',
@@ -18,7 +18,7 @@ const EducationPage = () => {
     phone_number: '',
   };
 
-  const storedExpData = JSON.parse(localStorage.getItem('dataExp')) || [
+  const storedExpData = JSON.parse(localStorage.getItem('dataExp')!) || [
     {
       position: '',
       employer: '',
@@ -28,7 +28,7 @@ const EducationPage = () => {
     },
   ];
 
-  const storedEducationData = JSON.parse(localStorage.getItem('dataEducation')) || [
+  const storedEducationData = JSON.parse(localStorage.getItem('dataEducation')!) || [
     {
       institute: '',
       degree_id: 0,
@@ -56,7 +56,7 @@ const EducationPage = () => {
     },
   };
 
-  const storedErrorData = JSON.parse(localStorage.getItem('errorsEducation')) || [initial_error_data];
+  const storedErrorData = JSON.parse(localStorage.getItem('errorsEducation')!) || [initial_error_data];
 
   const [formDatas, setFormDatas] = useState<Array<EducationFormDataObject>>(storedEducationData);
   const [errorData, setErrorData] = useState<EducationErrorDataArray>(storedErrorData);
@@ -85,7 +85,7 @@ const EducationPage = () => {
   }, [formDatas]);
 
   useEffect(() => {
-    const data = JSON.parse(localStorage.getItem('dataEducation'));
+    const data = JSON.parse(localStorage.getItem('dataEducation')!);
     if (data) {
       setFormDatas(data);
     }
@@ -96,7 +96,7 @@ const EducationPage = () => {
   }, [errorData]);
 
   useEffect(() => {
-    const errors = JSON.parse(localStorage.getItem('errorsEducation'));
+    const errors = JSON.parse(localStorage.getItem('errorsEducation')!);
     if (errors) {
       setErrorData(errors);
     }
@@ -157,12 +157,18 @@ const EducationPage = () => {
       if (idx === 0) {
         let newObj = {};
         Object.keys(obj).map((key) => {
-          if (!obj?.[key].changed) {
+          if (!obj?.[key as keyof EducationErrorDataObject].changed) {
             newObj = { ...newObj, [key]: { validated: false, changed: true } };
             return newObj;
-          } else if (obj?.[key].changed && obj?.[key].validated) {
+          } else if (
+            obj?.[key as keyof EducationErrorDataObject].changed &&
+            obj?.[key as keyof EducationErrorDataObject].validated
+          ) {
             newObj = { ...newObj, [key]: { validated: true, changed: true } };
-          } else if (obj?.[key].changed && !obj?.[key].validated) {
+          } else if (
+            obj?.[key as keyof EducationErrorDataObject].changed &&
+            !obj?.[key as keyof EducationErrorDataObject].validated
+          ) {
             newObj = { ...newObj, [key]: { validated: false, changed: true } };
           }
           return obj;
@@ -174,7 +180,7 @@ const EducationPage = () => {
     setErrorData(newErrors as EducationErrorDataArray);
 
     for (const value in errorData[0]) {
-      if (!errorData[0]?.[value].validated) {
+      if (!errorData[0]?.[value as keyof EducationErrorDataObject].validated) {
         countFormError += 1;
       }
     }
@@ -186,17 +192,23 @@ const EducationPage = () => {
     for (let i = 1; i < errorData.length; i++) {
       let countChanged = 0;
       let countError = 0;
-      const newErrorsAll = newErrors.map((obj, idx) => {
+      const newErrorsAll = (newErrors as EducationErrorDataArray).map((obj, idx) => {
         if (idx === i) {
           let newObj = {};
           Object.keys(obj).map((key) => {
-            if (!obj?.[key].changed) {
+            if (!obj?.[key as keyof EducationErrorDataObject].changed) {
               countChanged += 1;
               newObj = { ...newObj, [key]: { validated: false, changed: true } };
               return newObj;
-            } else if (obj?.[key].changed && obj?.[key].validated) {
+            } else if (
+              obj?.[key as keyof EducationErrorDataObject].changed &&
+              obj?.[key as keyof EducationErrorDataObject].validated
+            ) {
               newObj = { ...newObj, [key]: { validated: true, changed: true } };
-            } else if (obj?.[key].changed && !obj?.[key].validated) {
+            } else if (
+              obj?.[key as keyof EducationErrorDataObject].changed &&
+              !obj?.[key as keyof EducationErrorDataObject].validated
+            ) {
               countChanged += 1;
               newObj = { ...newObj, [key]: { validated: false, changed: true } };
             }

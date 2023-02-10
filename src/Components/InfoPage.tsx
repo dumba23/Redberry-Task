@@ -2,12 +2,12 @@ import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import formatPhoneNumber from '../Utils/formatPhoneNumber';
 
-import { BackLogo, ErrorLogo, SuccessLogo, LogoInfo } from '../Assets/Images';
+import { BackLogo, ErrorLogo, SuccessLogo, LogoInfo } from '../Assets';
 import PersonalInfo from '../Utils/PersonalInfo';
 import { ErrorDataInfoObject, InfoFormDataObject } from '../Types/info.types';
 
 const InfoPage = () => {
-  const storedFormData = JSON.parse(localStorage.getItem('dataPersonal')) || {
+  const storedFormData = JSON.parse(localStorage.getItem('dataPersonal')!) || {
     name: '',
     surname: '',
     email: '',
@@ -16,7 +16,7 @@ const InfoPage = () => {
     phone_number: '',
   };
 
-  const storedErrorData = JSON.parse(localStorage.getItem('errorsPersonal')) || {
+  const storedErrorData = JSON.parse(localStorage.getItem('errorsPersonal')!) || {
     name: {
       validated: false,
       changed: false,
@@ -59,7 +59,7 @@ const InfoPage = () => {
   }, [formData]);
 
   useEffect(() => {
-    const data = JSON.parse(localStorage.getItem('dataPersonal'));
+    const data = JSON.parse(localStorage.getItem('dataPersonal')!);
     if (data) {
       setFormData(data);
     }
@@ -70,15 +70,15 @@ const InfoPage = () => {
   }, [errorData]);
 
   useEffect(() => {
-    const errors = JSON.parse(localStorage.getItem('errorsPersonal'));
+    const errors = JSON.parse(localStorage.getItem('errorsPersonal')!);
     if (errors) {
       setErrorData(errors);
     }
   }, []);
 
-  const handleChange = (event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+  const handleChange = (event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement> | React.ChangeEvent) => {
     event.preventDefault();
-    const { name, value } = event.target;
+    const { name, value } = event.target as HTMLInputElement | HTMLTextAreaElement;
 
     switch (name) {
       case 'name':
@@ -106,15 +106,15 @@ const InfoPage = () => {
         break;
     }
 
-    if (name === 'image') {
+    if (name === 'image' && !(event.target as HTMLInputElement)?.files) {
       const target = event.target as HTMLInputElement;
-      const files = target.files[0];
+      const files = (target.files as FileList)[0];
       const reader = new FileReader();
 
       if (files.name.toLowerCase().endsWith('.png') || files.name.toLowerCase().endsWith('.jpg')) {
         reader.readAsDataURL(files);
         reader.addEventListener('load', () => {
-          setFormData({ ...formData, [name]: reader.result });
+          setFormData({ ...formData, [name as string]: reader.result });
         });
       }
     } else if (name === 'phone_number') {
@@ -136,10 +136,10 @@ const InfoPage = () => {
 
     let newErrorObject = {} as ErrorDataInfoObject;
     for (const value in errorData) {
-      if (errorData[value].validated) {
+      if (errorData[value as keyof ErrorDataInfoObject].validated) {
         newErrorObject = { ...newErrorObject, [value]: { validated: true, changed: true } };
         i += 1;
-      } else if (!errorData[value].changed) {
+      } else if (!errorData[value as keyof ErrorDataInfoObject].changed) {
         newErrorObject = { ...newErrorObject, [value]: { validated: false, changed: true } };
         setErrorData(newErrorObject);
       }

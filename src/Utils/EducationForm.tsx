@@ -1,7 +1,7 @@
 import React, { ChangeEvent, useState, useEffect } from 'react';
 import { EducationFormDataObject, EducationErrorDataObject, DegreeDataObject } from '../Types/education.types';
 
-import { ArrowLogo, ErrorLogo, SuccessLogo } from '../Assets/Images';
+import { ArrowLogo, ErrorLogo, SuccessLogo } from '../Assets';
 
 const ExperienceForm = ({
   handleChange,

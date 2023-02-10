@@ -1,0 +1,25 @@
+import Shutterstock from './Images/shutterstock.png';
+import LandingMid from './Images/logolandingmid.png';
+import LandingTop from './Images/logolandingtop.png';
+import Back from './Images/back.png';
+import Info from './Images/logoinfo.png';
+import Success from './Images/success.png';
+import Error from './Images/error.png';
+import Mobile from './Images/mobile.png';
+import Email from './Images/email.png';
+import Arrow from './Images/arrow.png';
+import BlacklogoResume from './Images/backlogoresume.png';
+import Close from './Images/close.png';
+
+export const ShutterstockImg = Shutterstock;
+export const LandingLogoMid = LandingMid;
+export const LandingLogoTop = LandingTop;
+export const BackLogo = Back;
+export const LogoInfo = Info;
+export const SuccessLogo = Success;
+export const ErrorLogo = Error;
+export const EmailLogo = Email;
+export const MobileLogo = Mobile;
+export const ArrowLogo = Arrow;
+export const BackLogoResume = BlacklogoResume;
+export const CloseLogo = Close;

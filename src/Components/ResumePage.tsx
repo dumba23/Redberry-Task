@@ -6,16 +6,16 @@ import dataURItoBlob from '../Utils/dataURItoBlob';
 import PersonalInfo from '../Utils/PersonalInfo';
 import ExperienceInfo from '../Utils/ExperienceInfo';
 import EducationInfo from '../Utils/EducationInfo';
-import { BackLogoResume, CloseLogo, LogoInfo } from '../Assets/Images';
+import { BackLogoResume, CloseLogo, LogoInfo } from '../Assets';
 import { Link } from 'react-router-dom';
 
 const ResumePage = () => {
   const [data, setData] = useState<DataObject>();
   const [isOpen, setIsOpen] = useState<Boolean>(true);
 
-  let storedPersonalData = JSON.parse(localStorage.getItem('dataPersonal'));
-  const storedExpData = JSON.parse(localStorage.getItem('dataExp'));
-  const storedEducationData = JSON.parse(localStorage.getItem('dataEducation'));
+  let storedPersonalData = JSON.parse(localStorage.getItem('dataPersonal')!);
+  const storedExpData = JSON.parse(localStorage.getItem('dataExp')!);
+  const storedEducationData = JSON.parse(localStorage.getItem('dataEducation')!);
 
   let fullData = useMemo(() => {
     return { ...storedPersonalData, experiences: storedExpData, educations: storedEducationData };
@@ -46,7 +46,7 @@ const ResumePage = () => {
         <img src={BackLogoResume} alt="Logo" />
       </Link>
       {data !== undefined && (
-        <div className="flex flex-col w-[822px] h-[900px] items-center bg-[#F9F9F9] box-border border-[0.8px] border-[#000000] relative mt-10">
+        <div className="flex flex-col w-[822px] h-[900px] items-center bg-[#FFFFFF] box-border border-[0.8px] border-[#000000] relative mt-10">
           <PersonalInfo
             name={data.name}
             surname={data.surname}

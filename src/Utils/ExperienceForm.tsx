@@ -1,7 +1,7 @@
 import React, { ChangeEvent, useState } from 'react';
 import { ExpErrorDataObject, ExpFormDataObject } from '../Types/experience.types';
 
-import { ErrorLogo, SuccessLogo } from '../Assets/Images';
+import { ErrorLogo, SuccessLogo } from '../Assets';
 
 const ExperienceForm = ({
   handleChange,

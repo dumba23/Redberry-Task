@@ -1,7 +1,7 @@
 import React from 'react';
 import formatPhoneNumber from './formatPhoneNumber';
 
-import { MobileLogo, EmailLogo } from '../Assets/Images';
+import { MobileLogo, EmailLogo } from '../Assets';
 
 const PersonalInfo = ({
   name,
