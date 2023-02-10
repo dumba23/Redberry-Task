@@ -106,7 +106,7 @@ const InfoPage = () => {
         break;
     }
 
-    if (name === 'image' && !(event.target as HTMLInputElement)?.files) {
+    if (name === 'image') {
       const target = event.target as HTMLInputElement;
       const files = (target.files as FileList)[0];
       const reader = new FileReader();

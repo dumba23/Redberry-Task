@@ -1,5 +1,5 @@
 import React from 'react';
-import { BrowserRouter, Route, Routes } from 'react-router-dom';
+import { HashRouter, Route, Routes } from 'react-router-dom';
 
 import LandingPage from './Components/LandgingPage';
 
@@ -10,7 +10,7 @@ import ResumePage from './Components/ResumePage';
 
 function App() {
   return (
-    <BrowserRouter>
+    <HashRouter>
       <Routes>
         <Route path="/" element={<LandingPage />} />
         <Route path="/piradi" element={<InfoPage />} />
@@ -18,7 +18,7 @@ function App() {
         <Route path="/ganatleba" element={<EducationPage />} />
         <Route path="/resume" element={<ResumePage />} />
       </Routes>
-    </BrowserRouter>
+    </HashRouter>
   );
 }
 
