@@ -9,6 +9,8 @@ const LandingPage = () => {
     localStorage.removeItem('errorsPersonal');
     localStorage.removeItem('dataExp');
     localStorage.removeItem('errorsExp');
+    localStorage.removeItem('dataEducation');
+    localStorage.removeItem('errorsEducation');
   }, []);
 
   return (

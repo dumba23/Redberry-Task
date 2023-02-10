@@ -114,7 +114,7 @@ const InfoPage = () => {
       if (files.name.toLowerCase().endsWith('.png') || files.name.toLowerCase().endsWith('.jpg')) {
         reader.readAsDataURL(files);
         reader.addEventListener('load', () => {
-          setFormData({ ...formData, [name]: reader.result});
+          setFormData({ ...formData, [name]: reader.result });
         });
       }
     } else if (name === 'phone_number') {

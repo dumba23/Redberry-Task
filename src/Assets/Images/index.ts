@@ -7,6 +7,8 @@ import Success from './success.png';
 import Error from './error.png';
 import Mobile from './mobile.png';
 import Email from './email.png';
+import Arrow from './arrow.png';
+import BlacklogoResume from './backlogoresume.png';
 
 export const ShutterstockImg = Shutterstock;
 export const LandingLogoMid = LandingMid;
@@ -17,3 +19,5 @@ export const SuccessLogo = Success;
 export const ErrorLogo = Error;
 export const EmailLogo = Email;
 export const MobileLogo = Mobile;
+export const ArrowLogo = Arrow;
+export const BackLogoResume = BlacklogoResume;
