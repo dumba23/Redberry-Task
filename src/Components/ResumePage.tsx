@@ -23,7 +23,11 @@ const ResumePage = () => {
 
   storedPersonalData = { ...storedPersonalData, image: dataURItoBlob(storedPersonalData.image) };
 
-  fullData = { ...storedPersonalData, experiences: storedExpData.filter((item: { position: string; }) => item.position !== ''), educations: storedEducationData.filter((item: { institute: string; }) => item.institute !== '') };
+  fullData = {
+    ...storedPersonalData,
+    experiences: storedExpData.filter((item: { position: string }) => item.position !== ''),
+    educations: storedEducationData.filter((item: { institute: string }) => item.institute !== ''),
+  };
 
   const getData = () => {
     axios
@@ -79,7 +83,8 @@ const ResumePage = () => {
                 <EducationInfo
                   key={i}
                   institute={data.educations[i].institute}
-                  degree_id={data.educations[i].degree_id}
+                  degree_id={0}
+                  degree={data.educations[i].degree}
                   due_date={data.educations[i].due_date}
                   description={data.educations[i].description}
                 />

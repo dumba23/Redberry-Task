@@ -1,13 +1,21 @@
-import React from 'react';
-import { EducationFormDataObject } from '../Types/education.types';
+import React, { useEffect, useState } from 'react';
+import { DegreeDataObject, EducationFormDataObject } from '../Types/education.types';
 
-const ExperienceInfo = ({ institute, degree_id, due_date, description }: EducationFormDataObject) => {
+const ExperienceInfo = ({ institute, degree_id, due_date, description, degree }: EducationFormDataObject) => {
+  const [degreeData, setDegreeData] = useState<Array<DegreeDataObject>>([{ id: 0, title: '' }]);
+
+  useEffect(() => {
+    fetch('https://resume.redberryinternship.ge/api/degrees')
+      .then((response) => response.json())
+      .then((data) => setDegreeData(data));
+  }, []);
+
   return (
     <div className="flex w-[80%] mt-4 flex-col">
-      {institute !== '' && degree_id !== 0 && (
+      {institute !== '' && (
         <div className="font-medium text-base text-[#1A1A1A]">
-          {institute + ', '}
-          {degree_id}
+          <>{institute + ', '}</>
+          <>{degree_id !== 0 ? degreeData[degree_id - 1] && degreeData[degree_id - 1].title : degree}</>
         </div>
       )}
 

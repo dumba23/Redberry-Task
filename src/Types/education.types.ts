@@ -3,6 +3,7 @@ export type EducationFormDataObject = {
   degree_id: number;
   due_date: string;
   description: string;
+  degree?: string;
 };
 
 export type EducationErrorDataObject = {
